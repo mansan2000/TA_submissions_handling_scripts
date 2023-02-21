@@ -18,12 +18,17 @@ def get_script_path():
     return os.path.dirname(os.path.realpath(sys.argv[0]))
 cwd = get_script_path()
 
-print("\n\nTo run this script make sure that the extracted folder of submissions is in the same directory as this script and appended with the the assigment it is for (eg. hw01, lab01...\n")
-assignment = input("Enter in assignment (eg. hw01, lab01)")
-startStudentnum = input("Enter starting student whole name in format lastnamefirstname: ")
-endStudentnum = input("Enter ending student whole name in format lastnamefirstname: ")
+print("\n\nTo run this script make sure that the extracted folder of submissions is in the same directory as this script and appended with the the assigment it is for (eg. submissionshw01, submissionslab01...)\n") 
+assignment = input("Enter in assignment (eg. HW01, lab01) *note that it is case sensitive to match folder* \n")
+startStudentnum = input("Enter starting student whole name in format lastnamefirstname (all lowercase): ")
+endStudentnum = input("Enter ending student whole name in format lastnamefirstname (all lowercase): ")
 
-extensionLookingFor = input("enter in extension you want to get files for")
+# assignment = "HW02"
+# startStudentnum = "simpsonhunter"
+# endStudentnum = "youngsadie"
+
+extension = input("\nEnter in extension you want to get files for:\n\n*If you want to get multiple extension types enter them in with a comma between them and no spaces <java,docx,pdf>* \n")
+extensionLookingFor = tuple(map(str, extension.split(",")))
 # Set up our folders to work from our current working directory 
 fromFolder = cwd+"/"+"submissions"+assignment
 extractedFolder = cwd+"/"+"submissionsExtracted"+assignment
@@ -52,7 +57,7 @@ def list_files(filepath, filetype):
    paths = []
    for root, dirs, files in os.walk(filepath,followlinks=True):
       for file in files:
-         if file.lower().endswith(filetype.lower()):
+         if file.lower().endswith(filetype):
             paths.append(os.path.join(root, file))
    return(paths)
 
@@ -87,7 +92,8 @@ def unzipFiles():
 Function that finds the java files in each student folder in our extractedFolder and copies them to our output folder and prepends the students name on the file name 
 '''
 def copyFiles():
-    files = list_files(extractedFolder, ".java")
+    files = list_files(extractedFolder, extensionLookingFor)
+    # files = os.listdir(extractedFolder)
     TF = False
     for file in files:
         if startStudentnum in file:
